@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        #users { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <label>Enter your username: <input id="username" /></label>
+    <button id="joinBtn">Join</button>
+
+    <h2>Online Users:</h2>
+    <ul id="users"></ul>
+
+    <script>
+        const socket = io();
+
+        const joinBtn = document.getElementById('joinBtn');
+        const usernameInput = document.getElementById('username');
+        const usersList = document.getElementById('users');
+
+        joinBtn.onclick = () => {
+            const username = usernameInput.value.trim();
+            if (!username) return alert('Enter a username!');
+            socket.emit('join', username);
+        };
+
+        socket.on('updateUsers', (users) => {
+            usersList.innerHTML = '';
+            users.forEach(u => {
+                const li = document.createElement('li');
+                li.textContent = u;
+                usersList.appendChild(li);
+            });
+        });
+    </script>
+</body>
+</html>
